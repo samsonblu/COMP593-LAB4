@@ -9,8 +9,6 @@ def main():
         if count >= 100:
             generate_port_traffic_report(log_file, port_num)
 
-    pass
-
 def tally_port_traffic(log_file):
     data = filter_log_by_regex(log_file, r'DPT=(.+?) ')[1]
     port_traffic = {}
@@ -19,13 +17,22 @@ def tally_port_traffic(log_file):
         port_traffic[port] = port_traffic.get(port, 0) + 1
     return port_traffic
 
-def generate_port_traffic_report(log_file, port_number):
-    regex = r'(.{6}) (.{8}) .*SRC=(.+) DST=(.+?) .+SPT(.+) ' + f'DPT({port_number}) '
+def generate_port_traffic_report(log_file, port_num):
+    regex = r'(.{6}) (.{8}) .*SRC=(.+?) DST=(.+?) .+SPT(.+?)' + f'DPT=({port_num})'
     data = filter_log_by_regex(log_file, regex)[1]
 
     report_df = pd.DataFrame(data)
     header_row = ('Data', 'Time', 'Source IP Address', 'Destination IP Address', 'Source Port', 'Destinataion Port')
-    report_df.to_csv(f'destination_port_{port_number}_report.csv', index=False, header=header_row)
+
+    column_widths = [15, 15, 25, 25, 15, 20]
+    for i, width in enumerate(column_widths):
+        column_name = header_row[i]
+        column = report_df[column_name]
+        column_width = max(column.astype(str).apply(len).max(), len(column_name))
+        if column_width > width:
+            column_widths[i] = column_width
+
+    report_df.to_csv(f'destination_port_{port_num}_report.csv', index=False, header=header_row)
 
     return
 
