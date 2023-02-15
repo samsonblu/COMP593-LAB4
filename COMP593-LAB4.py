@@ -40,9 +40,9 @@ def generate_invalid_user_report(log_file):
 
 # TODO: Step 12
 def generate_source_ip_log(log_file):
-    ip_address = "220.195.35.40"
-    ip_log = ip_address.replace('.','_')
-    regex = r'(.*)' + f'({ip_address})' + r'(.*)'
+    IP_ADDRESS = "220.195.35.40"
+    ip_log = IP_ADDRESS.replace('.','_')
+    regex = r'(.*)' + f'({IP_ADDRESS})' + r'(.*)'
     data = filter_log_by_regex(log_file, regex)[1]
     report_df = pd.DataFrame(data)
     report_df.to_csv(f'source_ip_{ip_log}.log', index=False)
